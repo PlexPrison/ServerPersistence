@@ -1,6 +1,6 @@
-package com.plexprison.serverpersistence;
+package com.plexprison.serverready;
 
-import com.plexprison.serverpersistence.game.EmptyGame;
+import com.plexprison.serverready.game.EmptyGame;
 import lombok.Getter;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Main plugin class for ServerPersistence.
+ * Main plugin class for ServerReady.
  * Handles plugin loading coordination and game state initialization.
  */
 @Getter
-public class ServerPersistence extends JavaPlugin implements Listener {
+public class ServerReady extends JavaPlugin implements Listener {
 
     private static final int REQUIRED_STABLE_TICKS = 20; // 1 second of stable state
 
@@ -67,13 +67,13 @@ public class ServerPersistence extends JavaPlugin implements Listener {
          * @return PluginStateSnapshot containing current plugin information
          */
         private PluginStateSnapshot createPluginStateSnapshot() {
-            final PluginManager pluginManager = ServerPersistence.this.getServer().getPluginManager();
+            final PluginManager pluginManager = ServerReady.this.getServer().getPluginManager();
             final Map<String, Boolean> currentStates = new HashMap<>();
             final List<String> failedPlugins = new ArrayList<>();
             boolean allPluginsFinished = true;
 
             for (final Plugin plugin : pluginManager.getPlugins()) {
-                if (!plugin.equals(ServerPersistence.this)) {
+                if (!plugin.equals(ServerReady.this)) {
                     final boolean isEnabled = plugin.isEnabled();
                     currentStates.put(plugin.getName(), isEnabled);
 
@@ -116,7 +116,7 @@ public class ServerPersistence extends JavaPlugin implements Listener {
         private void warnAboutFailedPlugins(final List<String> failedPlugins) {
             for (final String failedPlugin : failedPlugins) {
                 if (!this.warnedPlugins.contains(failedPlugin)) {
-                    ServerPersistence.this.getLogger().warning(
+                    ServerReady.this.getLogger().warning(
                             "Plugin '" + failedPlugin + "' failed to load but continuing with game state setup."
                     );
                     this.warnedPlugins.add(failedPlugin);
@@ -131,7 +131,7 @@ public class ServerPersistence extends JavaPlugin implements Listener {
          * @return true if you should proceed, false otherwise
          */
         private boolean shouldProceedToGameState(final boolean allPluginsFinished) {
-            return this.stableTicks >= ServerPersistence.REQUIRED_STABLE_TICKS && allPluginsFinished;
+            return this.stableTicks >= ServerReady.REQUIRED_STABLE_TICKS && allPluginsFinished;
         }
 
         /**
@@ -139,16 +139,16 @@ public class ServerPersistence extends JavaPlugin implements Listener {
          */
         private void proceedToGameState() {
             if (!this.warnedPlugins.isEmpty()) {
-                ServerPersistence.this.getLogger().info(
+                ServerReady.this.getLogger().info(
                         "All plugins have finished loading. Setting up game state with " +
                                 this.warnedPlugins.size() + " failed plugin(s)."
                 );
             } else {
-                ServerPersistence.this.getLogger().info(
+                ServerReady.this.getLogger().info(
                         "All plugins have finished loading successfully. Setting up game state."
                 );
             }
-            ServerPersistence.setState();
+            ServerReady.setState();
             this.cancel();
         }
     }

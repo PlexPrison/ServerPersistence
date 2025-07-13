@@ -1,4 +1,4 @@
-rootProject.name = "ServerPersistence"
+rootProject.name = "ServerReady"
 
 pluginManagement {
     repositories {
